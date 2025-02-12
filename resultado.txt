@@ -11,3 +11,25 @@ url para pesquisa: https://horizon-testnet.stellar.org/accounts/GAQ3DMYZ37GE5YIY
 
 account: GAQ3DMYZ37GE5YIYTN75N7KONOCUTOJTCSUZMIZ7SQ4L466GO77I65DM
 secret_key: SDMT7RM5DI6K5LKMD4OU6VZDFOU66RJ4W3L7KRNIHK3KZEV4OQUH3UFB
+
+No Stellar Expert:
+
+"11511610110810897114"
+11, 5, 11, 6, 10, 1, 10, 8, 10, 8, 9, 7, 11, 14
+Convertendo esses números em seus caracteres ASCII correspondentes:
+11 → \x0b (não imprimível, controle)
+5 → \x05 (não imprimível, controle)
+11 → \x0b (não imprimível, controle)
+6 → \x06 (não imprimível, controle)
+10 → \n (quebra de linha)
+1 → \x01 (controle)
+10 → \n (quebra de linha)
+8 → \b (backspace)
+10 → \n (quebra de linha)
+8 → \b (backspace)
+9 → \t (tabulação)
+7 → \a (alerta)
+11 → \x0b (controle)
+14 → \x0e (controle)
+
+Este formato é uma codificação de dados binários que contém a palavra "example_value" (com sua respectiva sequência de números que representam caracteres ASCII).
