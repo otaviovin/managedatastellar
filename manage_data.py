@@ -2,12 +2,12 @@
 import requests  # Biblioteca para fazer requisições HTTP
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network  # Importação das classes necessárias da biblioteca Stellar SDK
 from stellar_sdk.operation import ManageData  # Importação da operação ManageData da biblioteca Stellar SDK
+import base64 # Biblioteca para para codificar e decodificar dados usando o formato Base64
 
 # Função para adicionar dados a uma conta na rede Stellar
 def add_data_to_account(account_id: str, data_name: str, data_value: str):
     # Definindo a chave secreta da conta de origem. Esta chave é necessária para assinar a transação.
-    # **Nota**: A chave secreta deve ser mantida em segredo para segurança.
-    secret = "SDMT7RM5DI6K5LKMD4OU6VZDFOU66RJ4W3L7KRNIHK3KZEV4OQUH3UFB"  # Substitua pela chave secreta real da sua conta
+    secret = "SDMT7RM5DI6K5LKMD4OU6VZDFOU66RJ4W3L7KRNIHK3KZEV4OQUH3UFB"  # Coloque a chave secreta Stellar de sua preferência
     keypair = Keypair.from_secret(secret)  # Gerando a chave do par (pública/privada) usando a chave secreta
 
     # Conectando ao servidor Horizon na rede de Testnet. Horizon é o servidor da Stellar que interage com a blockchain.
@@ -63,14 +63,12 @@ account_id = "GAQ3DMYZ37GE5YIYTN75N7KONOCUTOJTCSUZMIZ7SQ4L466GO77I65DM"  # ID da
 data_name = "example_key"  # Nome dos dados a serem armazenados
 data_value = "example_value"  # Valor dos dados a serem armazenados
 
-# Adicionando dados à conta de destino
-add_data_to_account(account_id, data_name, data_value)
-
-# Consultando os dados armazenados na conta de destino
-query_data(account_id, data_name)
-
 # Código de teste principal, que é executado quando o script é rodado diretamente
 if __name__ == "__main__":
     # Passando os argumentos corretos para as funções dentro do __main__
     add_data_to_account(account_id, data_name, data_value)  # Chama a função para adicionar dados à conta
     query_data(account_id, data_name)  # Chama a função para consultar os dados da conta
+
+    encoded_value = "ZXhhbXBsZV92YWx1ZQ==" # # Valor codificado em Base64
+    decoded_value = base64.b64decode(encoded_value).decode('utf-8') # # Decodificar a string Base64
+    print(decoded_value)
