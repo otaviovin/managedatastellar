@@ -67,3 +67,10 @@ O código permite que você armazene dados arbitrários (chave/valor) em uma con
 Consulta de Dados:
 Você pode consultar os dados armazenados em uma conta Stellar acessando a API do Horizon, que retorna os dados associados a uma chave específica.
 Esse código exemplifica como interagir com a blockchain Stellar para armazenar e acessar dados arbitrários, o que pode ser útil para muitas aplicações descentralizadas (dApps) ou outras soluções que precisam gravar informações na blockchain.
+
+Documentos para verificação:
+
+https://stellar-sdk.readthedocs.io/en/latest/_modules/stellar_sdk/operation/manage_data.html
+https://developers.stellar.org/docs/learn/fundamentals/transactions/list-of-operations#manage-data
+https://stellar.expert/explorer/testnet
+
