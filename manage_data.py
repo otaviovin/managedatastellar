@@ -1,74 +1,89 @@
-# Importação das bibliotecas necessárias
-import requests  # Biblioteca para fazer requisições HTTP
-from stellar_sdk import Server, Keypair, TransactionBuilder, Network  # Importação das classes necessárias da biblioteca Stellar SDK
-from stellar_sdk.operation import ManageData  # Importação da operação ManageData da biblioteca Stellar SDK
-import base64 # Biblioteca para para codificar e decodificar dados usando o formato Base64
+# === Import required libraries ===
+import requests  # Used to make HTTP requests to the Stellar Horizon API
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network  # Core classes from the Stellar SDK
+from stellar_sdk.operation import ManageData  # Used to perform the ManageData operation on Stellar
+import base64  # Library for encoding and decoding data in Base64 format
 
-# Função para adicionar dados a uma conta na rede Stellar
+
+# === Function to add data to a Stellar account ===
 def add_data_to_account(account_id: str, data_name: str, data_value: str):
-    # Definindo a chave secreta da conta de origem. Esta chave é necessária para assinar a transação.
-    secret = "SDMT7RM5DI6K5LKMD4OU6VZDFOU66RJ4W3L7KRNIHK3KZEV4OQUH3UFB"  # Coloque a chave secreta Stellar de sua preferência
-    keypair = Keypair.from_secret(secret)  # Gerando a chave do par (pública/privada) usando a chave secreta
+    """
+    Adds (or updates) a key-value pair on a Stellar account using the ManageData operation.
+    """
+    # Define the secret key of the source account — required to sign and authorize the transaction
+    secret = "SDMT7RM5DI6K5LKMD4OU6VZDFOU66RJ4W3L7KRNIHK3KZEV4OQUH3UFB" # change for your secret key
+    keypair = Keypair.from_secret(secret)  # Create the keypair (public/private) from the secret key
 
-    # Conectando ao servidor Horizon na rede de Testnet. Horizon é o servidor da Stellar que interage com a blockchain.
+    # Connect to the Stellar Testnet Horizon server
+    # Horizon is the REST API layer used to interact with the Stellar blockchain
     server = Server("https://horizon-testnet.stellar.org")
 
-    # Criando a operação de adicionar dados (ManageData) na transação.
-    # A operação requer o nome dos dados e o valor a ser associado.
+    # Create a ManageData operation — used to attach arbitrary data to an account
     manage_data_op = ManageData(
-        data_name=data_name,  # Nome dos dados (chave)
-        data_value=data_value,  # Valor dos dados a ser armazenado
-        source=keypair.public_key  # A chave pública da conta de origem, que irá enviar os dados
+        data_name=data_name,         # Key name for the data entry
+        data_value=data_value,       # Value to be stored under this key
+        source=keypair.public_key    # Source account that authorizes this operation
     )
     
-    # Carregando a conta de destino (onde os dados serão adicionados) através do servidor Horizon
-    account = server.load_account(account_id)  # Esta função carrega a conta do blockchain Stellar com base no ID da conta
+    # Load the target account from the Stellar blockchain using its public key
+    account = server.load_account(account_id)
 
-    # Criando a transação. Uma transação no Stellar requer uma conta de origem e uma operação.
-    # Aqui, a conta carregada anteriormente é usada como origem.
-    transaction = TransactionBuilder(
-        source_account=account,  # A conta de origem que pagará pela transação
-        network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE  # A passphrase do Testnet, indicando que é uma rede de testes
-    ).append_operation(manage_data_op).build()  # A operação ManageData é adicionada à transação e a transação é construída
+    # Build the transaction that includes the ManageData operation
+    transaction = (
+        TransactionBuilder(
+            source_account=account,  # The account that will pay for the transaction
+            network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE  # Identifies we’re using the Testnet
+        )
+        .append_operation(manage_data_op)  # Attach the ManageData operation
+        .build()  # Finalize (build) the transaction
+    )
 
-    # Assinando a transação com a chave secreta da conta de origem.
-    # A assinatura é necessária para autorizar a execução da transação.
+    # Sign the transaction with the source account's private key
+    # Signing proves that the account owner authorizes this transaction
     transaction.sign(keypair)
 
-    # Enviando a transação para a rede Stellar através do servidor Horizon
+    # Submit the signed transaction to the Stellar network via Horizon
     response = server.submit_transaction(transaction)
 
-    # Exibindo a resposta da transação, que contém o status e o hash da transação
-    print("Transação enviada:", response)
+    # Print the transaction response — includes status and transaction hash
+    print("Transaction submitted:", response)
 
-# Função para consultar os dados de uma conta no Stellar
+
+# === Function to query data stored on a Stellar account ===
 def query_data(account_id: str, data_name: str):
-    # Construindo a URL para consultar os dados na conta usando a API do Horizon
+    """
+    Queries the data stored under a specific key on a Stellar account.
+    """
+    # Construct the Horizon API URL for the specific data key
     url = f"https://horizon-testnet.stellar.org/accounts/{account_id}/data/{data_name}"
     
-    # Enviando uma requisição HTTP GET para o servidor Horizon para obter os dados
+    # Send a GET request to the Horizon server
     response = requests.get(url)
     
-    # Verificando se a requisição foi bem-sucedida
+    # Check if the request was successful (HTTP 200)
     if response.status_code == 200:
-        # Se a resposta for bem-sucedida, convertemos o conteúdo JSON em um dicionário Python
-        data = response.json()
-        print(f"Dados encontrados: {data}")
+        data = response.json()  # Parse the JSON response into a Python dictionary
+        print(f"Data found: {data}")
     else:
-        # Caso contrário, exibimos o erro com o código de status da resposta e a mensagem de erro
-        print(f"Erro ao consultar dados: {response.status_code}, {response.text}")
+        # Print error details if the request failed
+        print(f"Error fetching data: {response.status_code}, {response.text}")
 
-# Exemplo de uso das funções
-account_id = "GAQ3DMYZ37GE5YIYTN75N7KONOCUTOJTCSUZMIZ7SQ4L466GO77I65DM"  # ID da conta de destino para os dados
-data_name = "example_key"  # Nome dos dados a serem armazenados
-data_value = "example_value"  # Valor dos dados a serem armazenados
 
-# Código de teste principal, que é executado quando o script é rodado diretamente
+# === Example usage ===
+account_id = "GAQ3DMYZ37GE5YIYTN75N7KONOCUTOJTCSUZMIZ7SQ4L466GO77I65DM"  # Destination account ID
+data_name = "example_key"  # Data key name
+data_value = "example_value"  # Data value to be stored
+
+
+# === Main script entry point ===
 if __name__ == "__main__":
-    # Passando os argumentos corretos para as funções dentro do __main__
-    add_data_to_account(account_id, data_name, data_value)  # Chama a função para adicionar dados à conta
-    query_data(account_id, data_name)  # Chama a função para consultar os dados da conta
+    # Add data to the Stellar account
+    add_data_to_account(account_id, data_name, data_value)
+    
+    # Query the same data back from the account
+    query_data(account_id, data_name)
 
-    encoded_value = "ZXhhbXBsZV92YWx1ZQ==" # # Valor codificado em Base64
-    decoded_value = base64.b64decode(encoded_value).decode('utf-8') # # Decodificar a string Base64
+    # Example of decoding a Base64 value returned by Horizon
+    encoded_value = "ZXhhbXBsZV92YWx1ZQ=="  # Base64-encoded version of "example_value"
+    decoded_value = base64.b64decode(encoded_value).decode('utf-8')  # Decode the Base64 string
     print(decoded_value)
