@@ -1,26 +1,27 @@
-# Stellar Data Management - Exemplo de Uso
+# Stellar Data Management - Usage Example
 
-Este repositório contém um exemplo simples de como interagir com a rede **Stellar** usando a **Stellar SDK** para adicionar e consultar dados em contas Stellar. O código usa a rede de **Testnet** para realizar operações sem risco de gastar tokens reais.
+This repository contains a simple example of how to interact with the **Stellar** network using the **Stellar SDK** to add and query data on Stellar accounts. The code uses the **Testnet** network to perform operations without the risk of spending real tokens.
 
-## Funcionalidades
+## Features
 
-O script realiza duas operações principais:
+The script performs two main operations:
 
-1. **Adicionar Dados a uma Conta Stellar**:
-   - A função `add_data_to_account` permite armazenar dados arbitrários (nome/valor) associados a uma chave dentro de uma conta Stellar.
+1. **Add Data to a Stellar Account**:  
+   - The `add_data_to_account` function allows you to store arbitrary data (key/value) associated with a key inside a Stellar account.
    
-2. **Consultar Dados Armazenados em uma Conta Stellar**:
-   - A função `query_data` permite consultar dados armazenados em uma conta Stellar pela chave associada.
+2. **Query Stored Data from a Stellar Account**:  
+   - The `query_data` function allows you to query data stored in a Stellar account using the associated key.
 
-## Requisitos
+## Requirements
 
-Certifique-se de ter o ambiente de desenvolvimento preparado com as seguintes dependências:
+Make sure your development environment is set up with the following dependencies:
 
-- **Python 3.x**
-- **requests**: Usado para fazer requisições HTTP.
-- **stellar-sdk**: A biblioteca oficial da Stellar para interagir com a rede Stellar.
+- **Python 3.x**  
+- **requests**: Used to make HTTP requests.  
+- **stellar-sdk**: The official Stellar library for interacting with the Stellar network.  
 
-Você pode instalar as dependências necessárias usando o `pip`:
+You can install the required dependencies using `pip`:
 
 ```bash
 pip install requests stellar-sdk
+```
