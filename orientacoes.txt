@@ -1,76 +1,80 @@
-Códio que interage com a blockchain Stellar para adicionar e consultar dados arbitrários armazenados em uma conta 
-específica. Ele usa a Stellar SDK para criar transações na rede Stellar, e a API Horizon para consultar informações.
+Code that interacts with the Stellar blockchain to add and query arbitrary data stored in a specific account.
+It uses the Stellar SDK to create transactions on the Stellar network, and the Horizon API to query account information.
 
-- requests: Usada para fazer chamadas HTTP, no caso para consultar dados de uma conta na API do Horizon.
-- stellar_sdk: Conjunto de classes e funções para interagir com a rede Stellar.
-- Server: Classe para conectar-se ao servidor Horizon.
-- Keypair: Classe para gerar pares de chaves públicas e secretas para autenticação de transações.
-- TransactionBuilder: Classe que permite construir e assinar transações.
-- Network: Contém as passphrases necessárias para identificar qual rede (Testnet, Mainnet) você está usando.
+- requests: Used to make HTTP requests — in this case, to fetch account data from the Horizon API.
+- stellar_sdk: A set of classes and functions for interacting with the Stellar network.
+- Server: Class used to connect to the Horizon server.
+- Keypair: Class for generating public/private key pairs used for transaction authentication.
+- TransactionBuilder: Class that enables you to construct and sign transactions.
+- Network: Contains the passphrases required to identify which network (Testnet or Mainnet) is being used.
 
-*****Função add_data_to_account*****
+*****Function add_data_to_account*****
 
-1. Definindo a chave secreta e gerando o par de chaves
+1. Defining the secret key and generating the key pair
 
-A chave secreta é a chave privada que permite a assinatura de transações.
-A função Keypair.from_secret(secret) gera tanto a chave pública (usada para identificar a conta) quanto a chave privada 
-(usada para assinar transações).
-Server cria uma conexão com o servidor Horizon, que é a interface entre o seu código e a blockchain Stellar.
-Usamos o URL do testnet (horizon-testnet.stellar.org), que é uma rede de testes, ideal para evitar custos e riscos com transações reais.
+The secret key is the private key that allows a user to sign transactions.
+The Keypair.from_secret(secret) function generates both the public key (used to identify the account) and the private key (used to sign transactions).
+Server creates a connection to the Horizon server, which acts as the interface between your code and the Stellar blockchain.
+Here we use the Testnet URL (horizon-testnet.stellar.org), a testing network ideal for avoiding real-world transaction costs and risks.
 
-2. Criando a operação
+2. Creating the operation
 
-A operação ManageData permite que você adicione ou modifique dados na blockchain Stellar.
-A data_name é a chave (nome) para o dado, e data_value é o valor associado a essa chave.
-A source especifica a chave pública da conta que está iniciando a transação. Neste caso, é a conta gerada pela chave secreta fornecida.
+The ManageData operation allows you to add or modify arbitrary data on the Stellar blockchain.
+data_name is the key (name) of the data, and data_value is the value associated with that key.
+The source parameter specifies the public key of the account initiating the transaction — in this case, the account generated from the provided secret key.
 
-3. Carregando a conta de destino
+3. Loading the destination account
 
-O método load_account(account_id) recupera as informações da conta do destino, usando o ID da conta fornecido.
-Ele retorna o estado atual da conta (saldo, operações pendentes, etc.).
+The method load_account(account_id) retrieves the details of the destination account using the given account ID.
+It returns the account’s current state (balance, pending operations, etc.).
 
-4. Construindo a transação
+4. Building the transaction
 
-TransactionBuilder é usado para construir a transação Stellar.
-O source_account define a conta que vai assinar e pagar pela transação.
-network_passphrase é uma string que identifica a rede que você está usando. Para o Testnet, é Network.TESTNET_NETWORK_PASSPHRASE.
+TransactionBuilder is used to construct the Stellar transaction.
+source_account defines the account that will sign and pay for the transaction.
+network_passphrase is a string that identifies the network you are using — for the Testnet, it is Network.TESTNET_NETWORK_PASSPHRASE.
 
-5. Assinando a transação
+5. Signing the transaction
 
-A transação precisa ser assinada pela chave privada da conta de origem para garantir que ela foi autorizada.
+The transaction must be signed with the private key of the source account to ensure it was authorized by the account owner.
 
-6. Enviando a transação
+6. Submitting the transaction
 
-A transação assinada é enviada para o servidor Horizon, que processa a transação na blockchain Stellar.
-O resultado da transação (sucesso ou falha) é exibido no terminal.
+The signed transaction is submitted to the Horizon server, which processes it on the Stellar blockchain.
+The result of the transaction (success or failure) is printed in the terminal.
 
-*****Função query_data*****
+*****Function query_data*****
 
-1. Construindo a URL da API do Horizon:
+1. Building the Horizon API URL:
 
-A URL é construída para acessar os dados de uma conta no Horizon.
-Substitui account_id pelo ID da conta que você deseja consultar, e data_name pela chave do dado.
+The URL is constructed to access account data through Horizon.
+It replaces account_id with the ID of the account you want to query and data_name with the name of the key being queried.
 
-2. Enviando uma requisição GET:
+2. Sending a GET request:
 
-A função requests.get(url) faz uma requisição HTTP GET para o servidor Horizon, que retornará os dados associados à chave data_name da conta.
+The function requests.get(url) sends an HTTP GET request to the Horizon server, which returns the data associated with the specified data_name key for that account.
 
-3. Verificando a resposta:
+3. Checking the response:
 
-Se a requisição for bem-sucedida (status_code == 200), os dados são convertidos de JSON para um dicionário Python com response.json().
-Se a consulta falhar, um erro é exibido com o código de status HTTP.
+If the request is successful (status_code == 200), the returned data is converted from JSON into a Python dictionary using response.json().
+If the request fails, an error message is displayed along with the HTTP status code.
 
-*****Resumo do Funcionamento do Código*****
+*****Code Functionality Summary*****
 
-Adição de Dados:
-O código permite que você armazene dados arbitrários (chave/valor) em uma conta Stellar, criando e assinando uma transação que inclui a operação ManageData.
-Consulta de Dados:
-Você pode consultar os dados armazenados em uma conta Stellar acessando a API do Horizon, que retorna os dados associados a uma chave específica.
-Esse código exemplifica como interagir com a blockchain Stellar para armazenar e acessar dados arbitrários, o que pode ser útil para muitas aplicações descentralizadas (dApps) ou outras soluções que precisam gravar informações na blockchain.
+Adding Data:
+
+The code allows you to store arbitrary key-value pairs in a Stellar account by creating and signing a transaction that includes a ManageData operation.
+
+Querying Data:
+
+You can query the data stored in a Stellar account by accessing the Horizon API, which returns the data associated with a specific key.
+
+This code demonstrates how to interact with the Stellar blockchain to store and access arbitrary data — a capability that can be very useful for decentralized applications (dApps) or other blockchain-based solutions that need to record data on-chain.
 
 Documentos para verificação:
 
-https://stellar-sdk.readthedocs.io/en/latest/_modules/stellar_sdk/operation/manage_data.html
-https://developers.stellar.org/docs/learn/fundamentals/transactions/list-of-operations#manage-data
-https://stellar.expert/explorer/testnet
+ManageData operation – stellar_sdk -> https://stellar-sdk.readthedocs.io/en/latest/_modules/stellar_sdk/operation/manage_data.html
+Manage Data – Stellar Developers Documentation -> https://developers.stellar.org/docs/learn/fundamentals/transactions/list-of-operations#manage-data
+Stellar Expert – Testnet Explorer -> https://stellar.expert/explorer/testnet
+
 
